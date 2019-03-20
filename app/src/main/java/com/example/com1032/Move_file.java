@@ -26,9 +26,9 @@ public class Move_file extends AppCompatActivity {
     public Move_file(){
         super();
     }
-    public void moveFileInitial(String file,String targetFolder){
-        sourceLocation=new File(""+file);
-        targetLocation=new File("/sdcard/"+targetFolder+"/"+file);
+    public void moveFile(File file){
+        sourceLocation=new File("/sdcard/Source/"+file.getName());
+        targetLocation=new File("/sdcard/Destination/"+file.getName());
         try {
 
             if(sourceLocation.renameTo(targetLocation)){
@@ -43,44 +43,15 @@ public class Move_file extends AppCompatActivity {
             e.printStackTrace();
         }
     }
-    public void moveFile(String sourceFolder, String file,String targetFolder){
-        sourceLocation=new File("/"+sourceFolder+"/"+file);
-        targetLocation=new File("/sdcard/"+targetFolder+"/"+file);
-        try {
 
-            if(sourceLocation.renameTo(targetLocation)){
-                Log.v(TAG, "Move file successful.");
-            }else{
-                Log.v(TAG, "Move file failed.");
-            }
-
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-    //
-
-    public void garbage(){
-        Drawable drawable = getDrawable(R.drawable.sample4);
-        Bitmap bm = ((BitmapDrawable)drawable).getBitmap();
-        ContextWrapper wrapper = new ContextWrapper(getApplicationContext());
-        File file = wrapper.getDir("sdcard",MODE_PRIVATE);
-        file = new File(file, "sample1"+".jpg");
-
-        //File file = new File("/sdcard/Source/sample1.JPG");
-        try{
-            OutputStream stream = new FileOutputStream(file);
-            bm.compress(Bitmap.CompressFormat.JPEG,100,stream);
-            stream.flush();
-            stream.close();
-        }catch(Exception e)
-        {
-            e.printStackTrace();
-        }
+    public File[] getDirectories(){
+        File file = new File("/sdcard/Source");
+        File[] files = file.listFiles();
+        return files;
 
     }
+
+
 
 
 }

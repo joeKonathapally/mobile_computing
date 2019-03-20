@@ -25,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         holding[0]=R.drawable.sample1;
         holding[1]=R.drawable.sample2;
         holding[2]=R.drawable.sample3;
@@ -36,25 +37,12 @@ public class MainActivity extends AppCompatActivity {
         holding[8]=R.drawable.sample9;
         holding[9]=R.drawable.sample10;
 
-    }
-
-
-    public void onClickButton(View v){
-
-
-        // the file to be moved
-        File sourceLocation = new File ("/sdcard/Test_garbage/NewTextFile.txt");
-
-
-        //the destination for the file to be moved to
-        File targetLocation = new File ("/sdcard/Test_garbage_1/NewTextFile.txt");
-
 
         //attempting to make the new file directories for the images
         try{
 
             File source = new File("/sdcard/Source");
-            File trach = new File("drawable-v24/sample1.JPG");
+
             File destination = new File("/sdcard/Destination");
             if(!source.exists())
             {
@@ -77,32 +65,19 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        System.gc();
-        Drawable drawable = getDrawable(R.drawable.sample3);
-        Bitmap bm = ((BitmapDrawable)drawable).getBitmap();
-        //ContextWrapper wrapper = new ContextWrapper(getApplicationContext());
-        File file = new File("/sdcard/Source/sample"+3+".jpeg");
 
-        //File file = new File("/sdcard/Source/sample1.JPG");
-        try{
-            OutputStream stream = new FileOutputStream(file);
-            bm.compress(Bitmap.CompressFormat.JPEG,100,stream);
-            stream.flush();
-            stream.close();
-        }catch(Exception e)
-        {
-            e.printStackTrace();
-        }
-        /**
+
+    }
+
+
+    public void onClickButton(View v){
+
         for(int i=0;i<10;i++)
         {
-            Drawable drawable = getDrawable(holding[i]);
-            Bitmap bm = ((BitmapDrawable)drawable).getBitmap();
-            //ContextWrapper wrapper = new ContextWrapper(getApplicationContext());
-            File file = new File("/sdcard/Source/sample"+(i+1)+".jpeg");
-
-            //File file = new File("/sdcard/Source/sample1.JPG");
             try{
+                Drawable drawable = getDrawable(holding[i]);
+                Bitmap bm = ((BitmapDrawable)drawable).getBitmap();
+                File file = new File("/sdcard/Source/sample"+(i+1)+".jpeg");
                 OutputStream stream = new FileOutputStream(file);
                 bm.compress(Bitmap.CompressFormat.JPEG,100,stream);
                 stream.flush();
@@ -112,26 +87,17 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
-        **/
 
-
-
-        /**
-
-        try {
-
-            if(sourceLocation.renameTo(targetLocation)){
-                Log.v(TAG, "Move file successful.");
-            }else{
-                Log.v(TAG, "Move file failed.");
-            }
-
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
+        Move_file move = new Move_file();
+        File[] files= move.getDirectories();
+        for(int i=0;i<files.length;i++)
+        {
+            move.moveFile(files[i]);
         }
-         **/
+
+
+
+
     }
 
 
