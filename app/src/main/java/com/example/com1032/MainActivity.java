@@ -16,6 +16,7 @@ import java.util.concurrent.Semaphore;
 
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import static com.example.com1032.Move_file.semaphore;
@@ -28,12 +29,15 @@ public class MainActivity extends AppCompatActivity {
     public static boolean accessing=false;
     static Semaphore semaphore = new Semaphore(1);
     private Move_file move = new Move_file();
+    public static TextView tv;
     private File[] files = move.getDirectories("/sdcard/Source");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        tv = (TextView)findViewById(R.id.textView);
 
         holding[0]=R.drawable.sample1;
         holding[1]=R.drawable.sample2;
@@ -101,68 +105,12 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         files=move.getDirectories("/sdcard/Source");
-        /**
-        try{
-            Move_file move = new Move_file();
-            File[] files= move.getDirectories("/sdcard/Source");
-            for(int i=0;i<files.length;i++)
-            {
-                move.moveFile(files[i]);
-            }
-        }catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-         **/
+
 
     }
 
     public void transferFiles(View v){
-        /**
-        Toast.makeText(getApplicationContext(),""+files.length+"\n"+position,Toast.LENGTH_SHORT).show();
-        Thread A = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                files=move.getDirectories("/sdcard/Source");
-                try{
-                    move.moveFile(files[0]);
-                }catch(Exception e){
-                    //Thread.currentThread().stop();
-                }
-                try{
-                    Thread.currentThread().sleep(100);
-                }catch(Exception e)
-                {
-                    e.printStackTrace();
-                }
 
-
-            }
-        });
-
-        Thread B = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                files=move.getDirectories("/sdcard/Source");
-                try{
-                    move.moveFile(files[0]);
-                }catch(Exception e){
-                    //Thread.currentThread().stop();
-                }
-                try{
-                    Thread.currentThread().sleep(100);
-                }catch(Exception e)
-                {
-                    e.printStackTrace();
-                }
-
-            }
-        });
-
-
-        A.start();
-        B.start();
-         **/
 
         CreatingTheInitialFiles A = new CreatingTheInitialFiles(files,"1");
         CreatingTheInitialFiles B = new CreatingTheInitialFiles(files,"2");
@@ -173,13 +121,9 @@ public class MainActivity extends AppCompatActivity {
         AThread.start();
         BThread.start();
 
-        try{
-            AThread.join();
-            BThread.join();
-        }catch (Exception e)
-        {
-            e.printStackTrace();
-        }
+
+
+
     }
 
 

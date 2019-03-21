@@ -25,19 +25,31 @@ public class CreatingTheInitialFiles implements Runnable {
 
     @Override
     public void run() {
-        while(MainActivity.position<file.length && MainActivity.accessing==false)
-        {
-            MainActivity.accessing=true;
-            Move_file move = new Move_file();
-            move.moveFile(file[MainActivity.position]);
-            MainActivity.position++;
-            MainActivity.accessing=false;
-            System.out.println("Thread "+name);
-            try{
-                Thread.currentThread().sleep((int)Math.random()*1000);
-            }catch(Exception e){
 
+        while(MainActivity.position<file.length)
+        {
+            while(!MainActivity.accessing)
+            {
+                try{
+                    MainActivity.tv.setText(MainActivity.position+"");
+                    MainActivity.accessing=true;
+                    Move_file move = new Move_file();
+                    move.moveFile(file[MainActivity.position]);
+                    MainActivity.position++;
+                    MainActivity.accessing=false;
+                    System.out.println("Thread "+name+" "+MainActivity.position);
+                    try{
+                        Thread.currentThread().sleep(1000);
+                        System.out.println("sleeping");
+                    }catch(Exception e){
+
+                    }
+                }
+                catch(Exception e){
+
+                }
             }
+
         }
 
     }
