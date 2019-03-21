@@ -14,14 +14,16 @@ import android.util.Log;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
+import java.util.concurrent.Semaphore;
 
 import static android.content.ContentValues.TAG;
 
 
-public class Move_file extends AppCompatActivity {
+public class Move_file{
 
     private File sourceLocation;
     private File targetLocation;
+    static Semaphore semaphore = new Semaphore(1);
 
     public Move_file(){
         super();
@@ -44,8 +46,8 @@ public class Move_file extends AppCompatActivity {
         }
     }
 
-    public File[] getDirectories(){
-        File file = new File("/sdcard/Source");
+    public File[] getDirectories(String str){
+        File file = new File(""+str);
         File[] files = file.listFiles();
         return files;
 
