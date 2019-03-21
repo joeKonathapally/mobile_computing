@@ -7,6 +7,8 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import java.io.File;
@@ -31,6 +33,9 @@ public class MainActivity extends AppCompatActivity {
     private Move_file move = new Move_file();
     public static TextView tv;
     private File[] files = move.getDirectories("/sdcard/Source");
+    public Handler handler = new Handler();
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +54,8 @@ public class MainActivity extends AppCompatActivity {
         holding[7]=R.drawable.sample8;
         holding[8]=R.drawable.sample9;
         holding[9]=R.drawable.sample10;
+
+
 
 
         //attempting to make the new file directories for the images
@@ -79,11 +86,35 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
+/*
+        final Runnable mUIUpdater = new Runnable() {
+            @Override
+            public void run() {
+                try{
+                    if(position==0)
+                    {
+                        tv.setText(position+"");
+                    }
+                    else{
+                        tv.setText(""+position);
+                    }
+                    handler.postDelayed(this,1);
+                }catch (Exception e){
+
+                }
+            }
+        };
+
+
+        handler.post(mUIUpdater);
 
 
 
+*/
 
     }
+
+
 
 
     public void onClickButton(View v){
@@ -127,4 +158,59 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-}
+
+    public class CreatingTheInitialFiles implements Runnable {
+
+        private File[] file;
+        private String name;
+
+        public CreatingTheInitialFiles(File[] files, String name){
+            super();
+            this.file=files;
+            this.name=name;
+        }
+
+        @Override
+        public void run() {
+
+            while(MainActivity.position<file.length)
+            {
+                while(!MainActivity.accessing)
+                {
+
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    tv.setText(" "+position);
+                                }
+                            });
+
+                        }
+                    });
+
+                        MainActivity.accessing=true;
+                        Move_file move = new Move_file();
+                        move.moveFile(file[MainActivity.position]);
+                        MainActivity.position++;
+                        MainActivity.accessing=false;
+                        System.out.println("Thread "+name+" "+MainActivity.position);
+                        try{
+                            Thread.currentThread().sleep(1000);
+                            System.out.println("sleeping");
+                        }catch(Exception e){
+
+                        }
+                    }
+                }
+
+            }
+
+        }
+    }
+
+
+
+
