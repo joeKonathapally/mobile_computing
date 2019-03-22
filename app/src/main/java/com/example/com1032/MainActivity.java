@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
@@ -27,8 +28,8 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity.java";
     private int[] holding = new int[10];
-    public static int position=0;
-    public static boolean accessing=false;
+    public static int position = 0;
+    public static boolean accessing = false;
     static Semaphore semaphore = new Semaphore(1);
     private Move_file move = new Move_file();
     public static TextView tv;
@@ -36,52 +37,45 @@ public class MainActivity extends AppCompatActivity {
     public Handler handler = new Handler();
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        tv = (TextView)findViewById(R.id.textView);
+        tv = (TextView) findViewById(R.id.textView);
 
-        holding[0]=R.drawable.sample1;
-        holding[1]=R.drawable.sample2;
-        holding[2]=R.drawable.sample3;
-        holding[3]=R.drawable.sample4;
-        holding[4]=R.drawable.sample5;
-        holding[5]=R.drawable.sample6;
-        holding[6]=R.drawable.sample7;
-        holding[7]=R.drawable.sample8;
-        holding[8]=R.drawable.sample9;
-        holding[9]=R.drawable.sample10;
-
-
+        holding[0] = R.drawable.sample1;
+        holding[1] = R.drawable.sample2;
+        holding[2] = R.drawable.sample3;
+        holding[3] = R.drawable.sample4;
+        holding[4] = R.drawable.sample5;
+        holding[5] = R.drawable.sample6;
+        holding[6] = R.drawable.sample7;
+        holding[7] = R.drawable.sample8;
+        holding[8] = R.drawable.sample9;
+        holding[9] = R.drawable.sample10;
 
 
         //attempting to make the new file directories for the images
-        try{
+        try {
 
             File source = new File("/sdcard/Source");
 
             File destination = new File("/sdcard/Destination");
-            if(!source.exists())
-            {
-                if(!source.mkdir())
-                {
-                    Toast.makeText(getApplicationContext(),"Failed to make the directory",Toast.LENGTH_SHORT).show();
+            if (!source.exists()) {
+                if (!source.mkdir()) {
+                    Toast.makeText(getApplicationContext(), "Failed to make the directory", Toast.LENGTH_SHORT).show();
                 }
             }
-            if(!destination.exists())
-            {
-                if(!destination.mkdir())
-                {
-                    Toast.makeText(getApplicationContext(),"Failed to make the directory",Toast.LENGTH_SHORT).show();
+            if (!destination.exists()) {
+                if (!destination.mkdir()) {
+                    Toast.makeText(getApplicationContext(), "Failed to make the directory", Toast.LENGTH_SHORT).show();
                 }
             }
 
-        }catch (NullPointerException e){
+        } catch (NullPointerException e) {
             e.printStackTrace();
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -115,36 +109,32 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    public void onClickButton(View v) {
 
-
-    public void onClickButton(View v){
-
-        for(int i=0;i<10;i++)
-        {
-            try{
-                Bitmap bm = BitmapFactory.decodeResource( getResources(), holding[i]);
-                File file = new File("/sdcard/Source/sample"+(i+1)+".jpeg");
+        for (int i = 0; i < 10; i++) {
+            try {
+                Bitmap bm = BitmapFactory.decodeResource(getResources(), holding[i]);
+                File file = new File("/sdcard/Source/sample" + (i + 1) + ".jpeg");
                 FileOutputStream stream1 = new FileOutputStream(file);
-                bm.compress(Bitmap.CompressFormat.JPEG,100,stream1);
+                bm.compress(Bitmap.CompressFormat.JPEG, 100, stream1);
                 stream1.flush();
                 stream1.close();
-                holding[i]=0;
+                holding[i] = 0;
 
-            }catch(Exception e)
-            {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-        files=move.getDirectories("/sdcard/Source");
+        files = move.getDirectories("/sdcard/Source");
 
 
     }
 
-    public void transferFiles(View v){
+    public void transferFiles(View v) {
 
 
-        CreatingTheInitialFiles A = new CreatingTheInitialFiles(files,"1");
-        CreatingTheInitialFiles B = new CreatingTheInitialFiles(files,"2");
+        CreatingTheInitialFiles A = new CreatingTheInitialFiles(files, "1");
+        CreatingTheInitialFiles B = new CreatingTheInitialFiles(files, "2");
 
         Thread AThread = new Thread(A);
         Thread BThread = new Thread(B);
@@ -153,10 +143,7 @@ public class MainActivity extends AppCompatActivity {
         BThread.start();
 
 
-
-
     }
-
 
 
     public class CreatingTheInitialFiles implements Runnable {
@@ -164,53 +151,53 @@ public class MainActivity extends AppCompatActivity {
         private File[] file;
         private String name;
 
-        public CreatingTheInitialFiles(File[] files, String name){
+        public CreatingTheInitialFiles(File[] files, String name) {
             super();
-            this.file=files;
-            this.name=name;
+            this.file = files;
+            this.name = name;
         }
 
         @Override
         public void run() {
+            try {
 
-            while(MainActivity.position<file.length)
-            {
-                while(!MainActivity.accessing)
-                {
+            while (MainActivity.position < file.length) {
+                while (!MainActivity.accessing) {
 
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            runOnUiThread(new Runnable() {
+
+                                            try{
+                            handler.post(new Runnable() {
                                 @Override
                                 public void run() {
                                     tv.setText(" "+position);
+
+
+
                                 }
                             });
+                        }catch(Exception e){}
 
-                        }
-                    });
 
-                        MainActivity.accessing=true;
+
+                        MainActivity.accessing = true;
                         Move_file move = new Move_file();
                         move.moveFile(file[MainActivity.position]);
                         MainActivity.position++;
-                        MainActivity.accessing=false;
-                        System.out.println("Thread "+name+" "+MainActivity.position);
-                        try{
-                            Thread.currentThread().sleep(1000);
-                            System.out.println("sleeping");
-                        }catch(Exception e){
+                        MainActivity.accessing = false;
+                        System.out.println("Thread " + name + " " + MainActivity.position);
+                        Thread.currentThread().sleep(1000);
+                        System.out.println("sleeping");
 
-                        }
-                    }
                 }
+            }
+            } catch (Exception e) {
 
             }
 
         }
+
     }
 
-
+}
 
 
